@@ -12,17 +12,17 @@ TFL_STOP_POINT_STATIC_PARAMS = {
 }
 
 
-def prompt_for_postcode():
+def _prompt_for_postcode():
     postcode = input('\nEnter your postcode: ')
     return postcode
 
 
-def display_stop_points(stop_points):
+def _display_stop_points(stop_points):
     for point in stop_points:
         print(point['commonName'])
 
 
-def get_nearest_stop_points(parameters):
+def _get_nearest_stop_points(parameters):
     request_url = (
             TFL_STOP_POINT_URL +
             urllib.parse.urlencode(
@@ -35,7 +35,7 @@ def get_nearest_stop_points(parameters):
     return response.json()
 
 
-def get_location_for_postcode(postcode):
+def _get_location_for_postcode(postcode):
     geolocator = Nominatim(user_agent='console-runner')
     location = geolocator.geocode(postcode)
     if not location:
@@ -46,7 +46,7 @@ def get_location_for_postcode(postcode):
     }
 
 
-def parse_nearest_stop_response(response_json, count):
+def _parse_nearest_stop_response(response_json, count):
     stop_points = response_json['stopPoints']
     return [{'naptanId': point['naptanId'], 'commonName': point['commonName']} for point in stop_points[:count]]
 
@@ -54,12 +54,12 @@ def parse_nearest_stop_response(response_json, count):
 def run():
     nearest_stops = []
     try:
-        user_inputted_postcode = prompt_for_postcode()
-        location = get_location_for_postcode(user_inputted_postcode)
-        nearest_stops = parse_nearest_stop_response(
-            get_nearest_stop_points(location),
+        user_inputted_postcode = _prompt_for_postcode()
+        location = _get_location_for_postcode(user_inputted_postcode)
+        nearest_stops = _parse_nearest_stop_response(
+            _get_nearest_stop_points(location),
             count=5,
         )
     except Exception as e:
         print(f"Error while parsing response: {e}")
-    display_stop_points(nearest_stops)
+    _display_stop_points(nearest_stops)
