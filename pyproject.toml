@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "exercise-template"
+version = "0.1.0"
+description = ""
+authors = ["Freya connor <freya.connor@softwire.com>"]
+readme = "README.md"
+packages = [
+  {include = "src"}
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+nominatim = "^0.1"
+requests = "^2.28.2"
+geopy = "^2.3.0"
+asyncio = "^3.4.3"
+
+[tool.poetry.scripts]
+start = "src:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
