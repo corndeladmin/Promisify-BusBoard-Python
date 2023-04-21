@@ -3,8 +3,8 @@ import urllib
 import requests
 from geopy.geocoders import Nominatim
 
-tfl_stop_point_url = "https://api.tfl.gov.uk/StopPoint?"
-tfl_stop_point_static_params = {
+TFL_STOP_POINT_URL = "https://api.tfl.gov.uk/StopPoint?"
+TFL_STOP_POINT_STATIC_PARAMS = {
     'stopTypes': 'NaptanPublicBusCoachTram',
     'radius': '1000',
     'app_id': '',
@@ -24,9 +24,9 @@ def display_stop_points(stop_points):
 
 def get_nearest_stop_points(parameters):
     request_url = (
-            tfl_stop_point_url +
+            TFL_STOP_POINT_URL +
             urllib.parse.urlencode(
-                tfl_stop_point_static_params | parameters
+                TFL_STOP_POINT_STATIC_PARAMS | parameters
             )
     )
     response = requests.get(request_url)
