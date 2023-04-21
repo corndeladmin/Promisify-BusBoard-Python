@@ -1,0 +1,65 @@
+import urllib
+
+import requests
+from geopy.geocoders import Nominatim
+
+tfl_stop_point_url = "https://api.tfl.gov.uk/StopPoint?"
+tfl_stop_point_static_params = {
+    'stopTypes': 'NaptanPublicBusCoachTram',
+    'radius': '1000',
+    'app_id': '',
+    'app_key': ''
+}
+
+
+def prompt_for_postcode():
+    postcode = input('\nEnter your postcode: ')
+    return postcode
+
+
+def display_stop_points(stop_points):
+    for point in stop_points:
+        print(point['commonName'])
+
+
+def get_nearest_stop_points(parameters):
+    request_url = (
+            tfl_stop_point_url +
+            urllib.parse.urlencode(
+                tfl_stop_point_static_params | parameters
+            )
+    )
+    response = requests.get(request_url)
+    if response.status_code != 200:
+        raise Exception(f'Request failed with status code {response.status_code}')
+    return response.json()
+
+
+def get_location_for_postcode(postcode):
+    geolocator = Nominatim(user_agent='console-runner')
+    location = geolocator.geocode(postcode)
+    if not location:
+        raise Exception('Could not retrieve location')
+    return {
+        'lat': location.latitude,
+        'lon': location.longitude,
+    }
+
+
+def parse_nearest_stop_response(response_json, count):
+    stop_points = response_json['stopPoints']
+    return [{'naptanId': point['naptanId'], 'commonName': point['commonName']} for point in stop_points[:count]]
+
+
+def run():
+    nearest_stops = []
+    try:
+        user_inputted_postcode = prompt_for_postcode()
+        location = get_location_for_postcode(user_inputted_postcode)
+        nearest_stops = parse_nearest_stop_response(
+            get_nearest_stop_points(location),
+            count=5,
+        )
+    except Exception as e:
+        print(f"Error while parsing response: {e}")
+    display_stop_points(nearest_stops)
