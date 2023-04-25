@@ -61,5 +61,5 @@ def run():
             count=5,
         )
     except Exception as e:
-        print(f"Error while parsing response: {e}")
+        print(f"Error in {e}")
     _display_stop_points(nearest_stops)
